@@ -1,9 +1,44 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
 
 export default function Home() {
+  const [value, setValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      await new Promise(() => {
+        setLoading(true);
+        setTimeout(async () => {
+          const data = await fetch("/api/products");
+          console.log(data);
+          const response = await data.json();
+          const temp = response
+            ?.filter((item) => {
+              return item?.name?.toLowerCase()?.includes(value?.toLowerCase());
+            })
+            .slice(0, 10);
+          setProducts(temp);
+          setLoading(false);
+          // console.log(temp);
+        }, 2000);
+      });
+    };
+
+    if (value.length >= 3) {
+      fetchData();
+    }
+  }, [value]);
+
+  console.log(loading);
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+      {/* <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <Image
           className="dark:invert"
           src="/next.svg"
@@ -95,7 +130,26 @@ export default function Home() {
           />
           Go to nextjs.org →
         </a>
-      </footer>
+      </footer> */}
+      <main>
+        <h1>Search Product Here</h1>
+        <Input
+          style={{ border: "1px solid gray" }}
+          onChange={(e) => setValue(e.target.value)}
+        />
+
+        <div>{loading ? <LoadingSpinner className={undefined} /> : null}</div>
+
+        <div>
+          {products?.map((item, index) => {
+            return (
+              <div key={index}>
+                <h1>{item?.name}</h1>
+              </div>
+            );
+          })}
+        </div>
+      </main>
     </div>
   );
 }
