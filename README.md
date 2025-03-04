@@ -10,4 +10,4 @@ To run this project
 To change configuration
 
     1. Follow this path to db.ts - project folder -> src -> app -> lib -> db.ts
-    2. Modify the properties inside connection variable based on mysql properties based on local machine
+    2. Modify the properties inside connection variable based on mysql properties based on local machine mysql configuration
